@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Repository File List</h1>
+  <ul>
+    <!-- Manually list PDFs or link dynamically -->
+    <script>
+      fetch('https://api.github.com/repos/files-iitd/BBL731/contents')
+      .then(res => res.json())
+      .then(data => {
+          data.forEach(file => {
+              document.write(`<li><a href="${file.download_url}">${file.name}</a></li>`);
+          });
+      });
+    </script>
+  </ul>
+</body>
+</html>

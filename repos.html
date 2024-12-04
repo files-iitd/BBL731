@@ -3,140 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BBL731 - Cosmic Knowledge Vault</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <title>BBL731 Course Files | IIT Delhi</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Mono:wght@400;700&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-color: #38bdf8;
+            --hover-color: #7dd3fc;
         }
-        body, html {
-            width: 100%;
-            height: 100%;
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #1e3a8a 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+        .glassmorphic {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.125);
+        }
+        .file-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            transition: all 0.3s ease;
+        }
+        .file-list-item {
+            transition: all 0.3s ease;
+            position: relative;
             overflow: hidden;
-            background: black;
-            font-family: 'Space Mono', monospace;
-            color: #00ffff;
-            cursor: none;
         }
-        #universe {
-            position: fixed;
+        .file-list-item::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            transform: translateX(-100%);
+            transition: 0.5s;
+            opacity: 0.1;
         }
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            pointer-events: none;
+        .file-list-item:hover::before {
+            transform: translateX(100%);
         }
-        #file-constellation {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            height: 80%;
-            perspective: 1000px;
+        .file-list-item:hover {
+            transform: scale(1.02);
+            background-color: var(--bg-secondary);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
         }
-        .file-node {
-            position: absolute;
-            display: flex;
-            align-items: center;
-            background: rgba(0,255,255,0.1);
-            border: 2px solid cyan;
-            border-radius: 50%;
-            padding: 10px;
-            transition: all 0.5s ease;
-            cursor: pointer;
-            transform-origin: center;
+        .loader {
+            border-top-color: var(--accent-color);
+            animation: spin 1s linear infinite;
         }
-        .file-node:hover {
-            background: rgba(0,255,255,0.3);
-            transform: scale(1.2);
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        #cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 2px solid cyan;
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            transition: transform 0.1s ease-out;
-            mix-blend-mode: difference;
-            z-index: 9999;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        #info-panel {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.7);
-            border: 2px solid cyan;
-            padding: 15px;
-            border-radius: 10px;
-            max-width: 300px;
+        #file-list > li {
+            animation: fadeIn 0.5s ease forwards;
             opacity: 0;
-            transition: opacity 0.3s ease;
-            font-family: 'Orbitron', sans-serif;
         }
-        #loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: black;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            color: cyan;
-            font-family: 'Orbitron', sans-serif;
+        #file-list > li:nth-child(1) { animation-delay: 0.1s; }
+        #file-list > li:nth-child(2) { animation-delay: 0.2s; }
+        #file-list > li:nth-child(3) { animation-delay: 0.3s; }
+        
+        .search-input {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
         }
-        #loading-progress {
-            width: 300px;
-            height: 10px;
-            background: rgba(0,255,255,0.2);
-            margin-top: 20px;
-        }
-        #loading-bar {
-            height: 100%;
-            width: 0;
-            background: cyan;
-            transition: width 0.5s ease;
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(56,189,248,0.2);
         }
     </style>
 </head>
-<body>
-    <div id="loading-screen">
-        <h1>Initializing Cosmic Knowledge Vault</h1>
-        <div id="loading-progress">
-            <div id="loading-bar"></div>
+<body class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="file-container glassmorphic w-full space-y-8">
+        <div class="text-center">
+            <h1 class="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">BBL731 Course Repository</h1>
+            <p class="text-xl text-gray-400 mb-8">Comprehensive Resource Hub for IIT Delhi Students</p>
+            
+            <div class="mb-6">
+                <input 
+                    type="text" 
+                    id="search-input" 
+                    placeholder="Search files and folders..." 
+                    class="search-input w-full p-3 rounded-lg text-white"
+                >
+            </div>
         </div>
-        <p id="loading-text">Warping through dimensions...</p>
+        
+        <div id="loader" class="flex justify-center items-center mb-6">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+        </div>
+
+        <ul id="file-list" class="space-y-3 text-lg"></ul>
     </div>
-    <div id="universe"></div>
-    <div id="file-constellation"></div>
-    <div id="overlay">
-        <div id="cursor"></div>
-    </div>
-    <div id="info-panel"></div>
 
     <script>
         const repoOwner = 'files-iitd';
@@ -144,202 +120,132 @@
         const branch = 'main';
         const baseCustomURL = 'https://files.rtnesharma.in/BBL731/';
 
-        // Three.js universe setup
-        let scene, camera, renderer, stars = [];
-        const UNIVERSE_SIZE = 1000;
+        const searchInput = document.getElementById('search-input');
+        let allItems = [];
 
-        function initUniverse() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.getElementById('universe').appendChild(renderer.domElement);
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const icons = {
+                'pdf': '📄', // PDF icon
+                'doc': '📝', // Word doc icon
+                'docx': '📝',
+                'ppt': '📊', // Presentation icon
+                'pptx': '📊',
+                'xls': '📊', // Spreadsheet icon
+                'xlsx': '📊',
+                'txt': '📋', // Text file icon
+                'zip': '🗄️', // Compressed file icon
+                'rar': '🗄️',
+                'default': '📁'
+            };
+            return icons[ext] || icons['default'];
+        }
 
-            // Create starry background
-            const starGeometry = new THREE.BufferGeometry();
-            const starMaterial = new THREE.PointsMaterial({ 
-                color: 0xffffff, 
-                size: 0.5, 
-                transparency: true 
-            });
-
-            const starVertices = [];
-            for (let i = 0; i < 10000; i++) {
-                const x = (Math.random() - 0.5) * UNIVERSE_SIZE;
-                const y = (Math.random() - 0.5) * UNIVERSE_SIZE;
-                const z = (Math.random() - 0.5) * UNIVERSE_SIZE;
-                starVertices.push(x, y, z);
+        function createFileElement(item) {
+            const listItem = document.createElement('li');
+            listItem.className = 'file-list-item bg-gray-800 p-4 rounded-lg hover:bg-gray-700 cursor-pointer flex items-center justify-between';
+            
+            const link = document.createElement('a');
+            link.href = `${baseCustomURL}${item.path}`;
+            link.target = '_blank';
+            link.className = 'flex items-center w-full';
+            
+            // File icon and path
+            const fileIcon = document.createElement('span');
+            fileIcon.className = 'mr-4 text-2xl';
+            fileIcon.innerHTML = getFileIcon(item.path);
+            
+            const filePathSpan = document.createElement('span');
+            filePathSpan.textContent = item.path;
+            filePathSpan.className = 'text-gray-200 hover:text-blue-300';
+            
+            link.appendChild(fileIcon);
+            link.appendChild(filePathSpan);
+            listItem.appendChild(link);
+            
+            // File size (if available)
+            if (item.size) {
+                const sizeSpan = document.createElement('span');
+                sizeSpan.textContent = `${(item.size / 1024).toFixed(1)} KB`;
+                sizeSpan.className = 'text-gray-500 text-sm';
+                listItem.appendChild(sizeSpan);
             }
 
-            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-            const starField = new THREE.Points(starGeometry, starMaterial);
-            scene.add(starField);
-
-            camera.position.z = 500;
+            return listItem;
         }
 
-        function animateUniverse() {
-            requestAnimationFrame(animateUniverse);
-            
-            // Slowly rotate the star field
-            scene.rotation.y += 0.0005;
-            scene.rotation.x += 0.0002;
-            
-            renderer.render(scene, camera);
-        }
-
-        // Custom cursor and interaction
-        function initCustomCursor() {
-            const cursor = document.getElementById('cursor');
-            const infoPanel = document.getElementById('info-panel');
-
-            document.addEventListener('mousemove', (e) => {
-                // Smooth cursor movement
-                gsap.to(cursor, {
-                    x: e.clientX,
-                    y: e.clientY,
-                    duration: 0.2,
-                    ease: 'power1.out'
+        async function fetchFilesFromGitHub(path = '', parentList = null) {
+            const apiURL = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}?ref=${branch}`;
+            try {
+                const response = await fetch(apiURL);
+                if (!response.ok) throw new Error(`Failed to fetch contents for ${path}`);
+                const items = await response.json();
+                
+                // Use the main list or create a nested list
+                const fileListElement = parentList || document.getElementById('file-list');
+                fileListElement.innerHTML = ''; // Clear previous content
+                
+                // Sort items: directories first, then files alphabetically
+                const sortedItems = items.sort((a, b) => {
+                    if (a.type === 'dir' && b.type === 'file') return -1;
+                    if (a.type === 'file' && b.type === 'dir') return 1;
+                    return a.path.localeCompare(b.path);
                 });
-            });
-        }
 
-        // File Constellation Creation
-        async function createFileConstellation() {
-            const fileConstellation = document.getElementById('file-constellation');
-            const infoPanel = document.getElementById('info-panel');
-
-            async function fetchFilesFromGitHub(path = '') {
-                const apiURL = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}?ref=${branch}`;
-                try {
-                    const response = await fetch(apiURL);
-                    if (!response.ok) throw new Error(`Failed to fetch contents for ${path}`);
-                    const items = await response.json();
-
-                    // Randomize and spread out file nodes
-                    items.forEach((item, index) => {
-                        const node = document.createElement('div');
-                        node.classList.add('file-node');
+                for (const item of sortedItems) {
+                    if (item.type === 'file') {
+                        const fileItem = createFileElement(item);
+                        fileListElement.appendChild(fileItem);
+                        allItems.push(fileItem);
+                    } else if (item.type === 'dir') {
+                        // Create a nested list for subfolders
+                        const listItem = document.createElement('li');
+                        listItem.className = 'bg-gray-900 p-4 rounded-lg';
                         
-                        // Unique positioning with 3D space feel
-                        const angle = Math.random() * Math.PI * 2;
-                        const radius = Math.random() * 400 + 100;
-                        const depth = Math.random() * 200 - 100;
-
-                        node.style.left = `calc(50% + ${Math.cos(angle) * radius}px)`;
-                        node.style.top = `calc(50% + ${Math.sin(angle) * radius}px)`;
-                        node.style.transform = `translateZ(${depth}px)`;
-
-                        // File type and icon
-                        const icon = document.createElement('span');
-                        icon.textContent = item.type === 'file' ? '📄' : '📁';
-                        icon.style.fontSize = '24px';
-                        node.appendChild(icon);
-
-                        // Interaction
-                        node.addEventListener('mouseenter', () => {
-                            infoPanel.innerHTML = `
-                                <h3>${item.name}</h3>
-                                <p>Path: ${item.path}</p>
-                                <a href="${baseCustomURL}${item.path}" target="_blank">Open File</a>
-                            `;
-                            gsap.to(infoPanel, { opacity: 1, duration: 0.3 });
-                            node.style.transform = 'scale(1.5) translateZ(50px)';
-                        });
-
-                        node.addEventListener('mouseleave', () => {
-                            gsap.to(infoPanel, { opacity: 0, duration: 0.3 });
-                            node.style.transform = `translateZ(${depth}px)`;
-                        });
-
-                        node.addEventListener('click', () => {
-                            if (item.type === 'file') {
-                                window.open(`${baseCustomURL}${item.path}`, '_blank');
-                            }
-                        });
-
-                        fileConstellation.appendChild(node);
-                    });
-
-                    // Recursively fetch subdirectories
-                    for (const item of items) {
-                        if (item.type === 'dir') {
-                            await fetchFilesFromGitHub(item.path);
-                        }
+                        const folderSpan = document.createElement('span');
+                        folderSpan.className = 'font-semibold text-gray-300 flex items-center text-xl';
+                        folderSpan.innerHTML = '📁 ' + item.name;
+                        listItem.appendChild(folderSpan);
+                        
+                        const nestedList = document.createElement('ul');
+                        nestedList.className = 'pl-6 mt-2 space-y-2';
+                        listItem.appendChild(nestedList);
+                        
+                        fileListElement.appendChild(listItem);
+                        
+                        // Recursively fetch contents of the subfolder
+                        await fetchFilesFromGitHub(item.path, nestedList);
                     }
-                } catch (error) {
-                    console.error('Error fetching files:', error);
                 }
+
+                // Hide loader once files are loaded
+                document.getElementById('loader').style.display = 'none';
+            } catch (error) {
+                console.error(`Error fetching files for path "${path}":`, error);
+                
+                // Show error message
+                const fileListElement = document.getElementById('file-list');
+                const errorItem = document.createElement('li');
+                errorItem.className = 'text-red-400 text-center p-4';
+                errorItem.textContent = `Error loading files: ${error.message}`;
+                fileListElement.appendChild(errorItem);
+                
+                // Hide loader
+                document.getElementById('loader').style.display = 'none';
             }
-
-            await fetchFilesFromGitHub();
         }
 
-        // Loading Simulation
-        function simulateLoading() {
-            const loadingBar = document.getElementById('loading-bar');
-            const loadingText = document.getElementById('loading-text');
-            const loadingScreen = document.getElementById('loading-screen');
-
-            const loadingStages = [
-                "Calibrating quantum file encoders...",
-                "Weaving interdimensional file networks...",
-                "Synchronizing cosmic data streams...",
-                "Establishing neural knowledge pathways...",
-                "Finalizing universal file constellation..."
-            ];
-
-            return new Promise((resolve) => {
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += 20;
-                    loadingBar.style.width = `${progress}%`;
-                    
-                    // Update loading text
-                    loadingText.textContent = loadingStages[progress / 20 - 1];
-
-                    if (progress >= 100) {
-                        clearInterval(interval);
-                        setTimeout(() => {
-                            gsap.to(loadingScreen, {
-                                opacity: 0,
-                                duration: 1,
-                                onComplete: () => {
-                                    loadingScreen.style.display = 'none';
-                                    resolve();
-                                }
-                            });
-                        }, 500);
-                    }
-                }, 500);
+        // Search functionality
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            allItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(searchTerm) ? '' : 'none';
             });
-        }
+        });
 
-        // Main Initialization
-        async function init() {
-            // Loading simulation
-            await simulateLoading();
-
-            // Initialize cosmic universe
-            initUniverse();
-            animateUniverse();
-
-            // Create file constellation
-            await createFileConstellation();
-
-            // Set up custom cursor
-            initCustomCursor();
-
-            // Responsive handling
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
-        }
-
-        // Kick off the magical experience
-        init();
+        // Start fetching files
+        fetchFilesFromGitHub();
     </script>
 </body>
 </html>

@@ -8,44 +8,40 @@
   <ul id="file-list"></ul>
 
   <script>
-    const baseURL = 'https://files.rtnesharma.in/BBL731/';
+    const repoOwner = 'files-iitd'; // Replace with your GitHub username
+    const repoName = 'BBL731'; // Replace with your repository name
+    const branch = 'main'; // Replace with your branch name (e.g., main)
+    const baseCustomURL = 'https://files.rtnesharma.in/BBL731/';
 
-    // Function to dynamically add files to the list
-    async function fetchFiles() {
-      const fileListElement = document.getElementById('file-list');
+    async function fetchFilesFromGitHub() {
+      const apiURL = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
+
       try {
-        // Fetch the list of files (assuming public URLs or a predictable structure)
-        const response = await fetch(baseURL);
-        if (!response.ok) throw new Error('Failed to fetch file list.');
+        const response = await fetch(apiURL);
+        if (!response.ok) throw new Error('Failed to fetch file list from GitHub.');
 
-        // Parse response and dynamically generate links
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(await response.text(), 'text/html');
+        const files = await response.json();
 
-        // Extract links from the GitHub Pages directory index (or customize for your setup)
-        const links = Array.from(doc.querySelectorAll('a[href]'))
-          .filter(link => !link.href.endsWith('/')) // Exclude directories
-          .map(link => ({
-            name: link.textContent,
-            url: link.href
-          }));
+        const fileListElement = document.getElementById('file-list');
 
-        // Populate the file list
-        links.forEach(file => {
-          const listItem = document.createElement('li');
-          const link = document.createElement('a');
-          link.href = file.url;
-          link.textContent = file.name;
-          listItem.appendChild(link);
-          fileListElement.appendChild(listItem);
+        files.forEach(file => {
+          if (file.type === 'file') {
+            // Create a list item for each file
+            const listItem = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = `${baseCustomURL}${file.name}`;
+            link.textContent = file.name;
+            listItem.appendChild(link);
+            fileListElement.appendChild(listItem);
+          }
         });
       } catch (error) {
-        console.error('Error fetching file list:', error);
-        fileListElement.textContent = 'Unable to load file list.';
+        console.error('Error fetching files:', error);
+        document.getElementById('file-list').textContent = 'Unable to load files.';
       }
     }
 
-    fetchFiles();
+    fetchFilesFromGitHub();
   </script>
 </body>
 </html>

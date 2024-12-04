@@ -5,39 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BBL731 Course Files | IIT Delhi</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-color: #38bdf8;
-            --hover-color: #7dd3fc;
+            --bg-primary: #0f1729;
+            --bg-secondary: #1a2234;
+            --text-primary: #ffffff;
+            --text-secondary: #a3b3c9;
+            --accent-color: #6366f1;
+            --hover-color: #818cf8;
+            --gradient-start: #6366f1;
+            --gradient-end: #8b5cf6;
+            --card-bg: rgba(26, 34, 52, 0.7);
         }
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, #1e3a8a 100%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at top right, #2d1f50 0%, var(--bg-primary) 100%);
             color: var(--text-primary);
+            min-height: 100vh;
             overflow-x: hidden;
         }
         .glassmorphic {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.125);
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
         .file-container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-            transition: all 0.3s ease;
+            padding: 2.5rem;
+            border-radius: 24px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .file-list-item {
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .file-list-item::before {
             content: '';
@@ -46,22 +51,22 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            background: linear-gradient(90deg, transparent, var(--gradient-start), var(--gradient-end));
             transform: translateX(-100%);
-            transition: 0.5s;
-            opacity: 0.1;
+            transition: 0.6s;
+            opacity: 0.15;
         }
         .file-list-item:hover::before {
             transform: translateX(100%);
         }
         .file-list-item:hover {
-            transform: scale(1.02);
-            background-color: var(--bg-secondary);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+            background-color: rgba(99, 102, 241, 0.1);
+            border-color: var(--accent-color);
         }
         .loader {
             border-top-color: var(--accent-color);
-            animation: spin 1s linear infinite;
+            animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -72,40 +77,98 @@
             to { opacity: 1; transform: translateY(0); }
         }
         #file-list > li {
-            animation: fadeIn 0.5s ease forwards;
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
             opacity: 0;
         }
-        #file-list > li:nth-child(1) { animation-delay: 0.1s; }
-        #file-list > li:nth-child(2) { animation-delay: 0.2s; }
-        #file-list > li:nth-child(3) { animation-delay: 0.3s; }
-        
         .search-input {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px;
         }
         .search-input:focus {
             outline: none;
             border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(56,189,248,0.2);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+            background: rgba(255,255,255,0.12);
+        }
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .folder-header {
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .breadcrumb {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        .breadcrumb-item {
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .breadcrumb-item:hover {
+            color: var(--accent-color);
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+<body class="py-12 px-4 sm:px-6 lg:px-8">
     <div class="file-container glassmorphic w-full space-y-8">
         <div class="text-center">
-            <h1 class="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">BBL731 Course Repository</h1>
+            <h1 class="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                BBL731 Course Repository
+            </h1>
             <p class="text-xl text-gray-400 mb-8">Comprehensive Resource Hub for IIT Delhi Students</p>
             
-            <div class="mb-6">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3 class="text-2xl font-bold text-indigo-400" id="total-files">0</h3>
+                    <p class="text-gray-400">Total Files</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="text-2xl font-bold text-purple-400" id="total-size">0 MB</h3>
+                    <p class="text-gray-400">Total Size</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="text-2xl font-bold text-pink-400" id="last-updated">-</h3>
+                    <p class="text-gray-400">Last Updated</p>
+                </div>
+            </div>
+            
+            <div class="mb-6 relative">
                 <input 
                     type="text" 
                     id="search-input" 
                     placeholder="Search files and folders..." 
-                    class="search-input w-full p-3 rounded-lg text-white"
+                    class="search-input w-full p-4 text-lg text-white"
                 >
+                <div class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    🔍
+                </div>
             </div>
         </div>
+
+        <nav class="breadcrumb" id="breadcrumb">
+            <span class="breadcrumb-item">Home</span>
+        </nav>
         
         <div id="loader" class="flex justify-center items-center mb-6">
             <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
@@ -174,7 +237,40 @@
             return listItem;
         }
 
+        let totalSize = 0;
+        let fileCount = 0;
+        let lastUpdated = null;
+
+        function updateStats(items) {
+            fileCount = items.filter(item => item.type === 'file').length;
+            totalSize = items.reduce((acc, item) => acc + (item.size || 0), 0);
+            lastUpdated = new Date().toLocaleDateString();
+
+            document.getElementById('total-files').textContent = fileCount;
+            document.getElementById('total-size').textContent = `${(totalSize / (1024 * 1024)).toFixed(2)} MB`;
+            document.getElementById('last-updated').textContent = lastUpdated;
+        }
+
+        function updateBreadcrumb(path) {
+            const breadcrumb = document.getElementById('breadcrumb');
+            breadcrumb.innerHTML = '<span class="breadcrumb-item">Home</span>';
+            
+            if (path) {
+                const parts = path.split('/');
+                let currentPath = '';
+                
+                parts.forEach((part, index) => {
+                    currentPath += part + '/';
+                    breadcrumb.innerHTML += `
+                        <span class="text-gray-400">/</span>
+                        <span class="breadcrumb-item" data-path="${currentPath}">${part}</span>
+                    `;
+                });
+            }
+        }
+
         async function fetchFilesFromGitHub(path = '', parentList = null) {
+            updateBreadcrumb(path);
             const apiURL = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}?ref=${branch}`;
             try {
                 const response = await fetch(apiURL);
@@ -233,6 +329,7 @@
                 // Hide loader
                 document.getElementById('loader').style.display = 'none';
             }
+            updateStats(items);
         }
 
         // Search functionality

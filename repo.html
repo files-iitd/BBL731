@@ -12,23 +12,40 @@
             background: linear-gradient(135deg, #f0f4f8 0%, #e6eaf4 100%);
         }
         .file-container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 2rem;
             background: white;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            border-radius: 12px;
+            border-radius: 16px;
         }
         .file-list-item {
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
         .file-list-item:hover {
-            transform: translateX(10px);
-            color: #3182ce;
+            transform: translateX(8px);
+            background-color: #EBF4FF !important;
         }
         .loader {
             border-top-color: #3182ce;
             animation: spin 1s linear infinite;
+        }
+        .search-container {
+            position: relative;
+        }
+        .search-container::before {
+            content: '🔍';
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.5;
+        }
+        .search-input {
+            padding-left: 3rem !important;
+        }
+        .search-input:focus {
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -41,10 +58,24 @@
         <div class="text-center">
             <h1 class="text-4xl font-bold text-gray-900 mb-4">BBL731 Course Repository</h1>
             <p class="text-xl text-gray-600 mb-8">File List for IIT Delhi Students</p>
+            
+            <!-- Search Bar -->
+            <div class="search-container max-w-xl mx-auto mb-8">
+                <input 
+                    type="text" 
+                    id="search-input"
+                    class="search-input w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500 transition-all duration-200"
+                    placeholder="Search files..."
+                >
+            </div>
         </div>
         
         <div id="loader" class="flex justify-center items-center mb-6">
             <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+        </div>
+
+        <div id="no-results" class="hidden text-center text-gray-600 py-8">
+            No matching files found
         </div>
 
         <ul id="file-list" class="space-y-3 text-lg"></ul>
@@ -56,6 +87,30 @@
         const branch = 'main';
         const baseCustomURL = 'https://files.rtnesharma.in/BBL731/';
 
+        // Add search functionality
+        const searchInput = document.getElementById('search-input');
+        const noResults = document.getElementById('no-results');
+        
+        function filterFiles() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const allFiles = document.querySelectorAll('.file-list-item, .folder-item');
+            let hasVisibleItems = false;
+
+            allFiles.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    item.style.display = '';
+                    hasVisibleItems = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            noResults.style.display = hasVisibleItems ? 'none' : 'block';
+        }
+
+        searchInput.addEventListener('input', filterFiles);
+
         async function fetchFilesFromGitHub(path = '', parentList = null) {
             const apiURL = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}?ref=${branch}`;
             try {
@@ -65,7 +120,17 @@
                 
                 const fileListElement = parentList || document.getElementById('file-list');
                 
-                const filteredItems = items.filter(item => !item.name.endsWith('.html'));
+                const filteredItems = items.filter(item => {
+                    const fileName = item.name.toLowerCase();
+                    return !(
+                        fileName.endsWith('.html') ||
+                        fileName.startsWith('.git') ||
+                        fileName === 'license' ||
+                        fileName === 'readme.md' ||
+                        fileName === '.ds_store'
+                    );
+                });
+                
                 const sortedItems = filteredItems.sort((a, b) => {
                     if (a.type === 'dir' && b.type === 'file') return -1;
                     if (a.type === 'file' && b.type === 'dir') return 1;
@@ -75,12 +140,12 @@
                 for (const item of sortedItems) {
                     if (item.type === 'file') {
                         const listItem = document.createElement('li');
-                        listItem.className = 'file-list-item bg-gray-100 p-3 rounded-lg hover:bg-blue-100 cursor-pointer';
+                        listItem.className = 'file-list-item bg-gray-50 p-4 rounded-lg hover:bg-blue-100 cursor-pointer shadow-sm';
                         
                         const link = document.createElement('a');
                         link.href = `${baseCustomURL}${item.path}`;
                         link.target = '_blank';
-                        link.className = 'flex items-center';
+                        link.className = 'flex items-center text-gray-700 hover:text-blue-600';
                         
                         const fileIcon = document.createElement('span');
                         fileIcon.className = 'mr-3 text-blue-500';
@@ -95,7 +160,7 @@
                         fileListElement.appendChild(listItem);
                     } else if (item.type === 'dir') {
                         const listItem = document.createElement('li');
-                        listItem.className = 'bg-gray-200 p-3 rounded-lg';
+                        listItem.className = 'folder-item bg-blue-50 p-4 rounded-lg shadow-sm';
                         
                         const folderSpan = document.createElement('span');
                         folderSpan.className = 'font-semibold text-gray-800 flex items-center';
@@ -103,7 +168,7 @@
                         listItem.appendChild(folderSpan);
                         
                         const nestedList = document.createElement('ul');
-                        nestedList.className = 'pl-6 mt-2 space-y-2';
+                        nestedList.className = 'pl-6 mt-3 space-y-2';
                         listItem.appendChild(nestedList);
                         
                         fileListElement.appendChild(listItem);
@@ -118,7 +183,7 @@
                 
                 const fileListElement = document.getElementById('file-list');
                 const errorItem = document.createElement('li');
-                errorItem.className = 'text-red-600 text-center p-4';
+                errorItem.className = 'text-red-600 text-center p-4 bg-red-50 rounded-lg';
                 errorItem.textContent = `Error loading files: ${error.message}`;
                 fileListElement.appendChild(errorItem);
                 

@@ -8,39 +8,49 @@
   <ul id="file-list"></ul>
 
   <script>
-    const repoOwner = 'files-iitd'; // Replace with your GitHub username
-    const repoName = 'BBL731'; // Replace with your repository name
-    const branch = 'main'; // Replace with your branch name (e.g., main)
+    const repoOwner = 'files-iitd'; // GitHub username
+    const repoName = 'BBL731'; // Repository name
+    const branch = 'main'; // Branch name
     const baseCustomURL = 'https://files.rtnesharma.in/BBL731/';
 
-    async function fetchFilesFromGitHub() {
-      const apiURL = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
+    // Recursive function to fetch files and subfolders
+    async function fetchFilesFromGitHub(path = '') {
+      const apiURL = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}?ref=${branch}`;
 
       try {
         const response = await fetch(apiURL);
-        if (!response.ok) throw new Error('Failed to fetch file list from GitHub.');
+        if (!response.ok) throw new Error(`Failed to fetch contents for ${path}`);
 
-        const files = await response.json();
-
+        const items = await response.json();
         const fileListElement = document.getElementById('file-list');
 
-        files.forEach(file => {
-          if (file.type === 'file') {
-            // Create a list item for each file
+        for (const item of items) {
+          if (item.type === 'file') {
+            // Create list item for files
             const listItem = document.createElement('li');
             const link = document.createElement('a');
-            link.href = `${baseCustomURL}${file.name}`;
-            link.textContent = file.name;
+            link.href = `${baseCustomURL}${item.path}`;
+            link.textContent = item.path;
             listItem.appendChild(link);
             fileListElement.appendChild(listItem);
+          } else if (item.type === 'dir') {
+            // Create a nested list for subfolders
+            const listItem = document.createElement('li');
+            listItem.textContent = item.name;
+            const nestedList = document.createElement('ul');
+            listItem.appendChild(nestedList);
+            fileListElement.appendChild(listItem);
+
+            // Recursively fetch contents of the subfolder
+            await fetchFilesFromGitHub(item.path);
           }
-        });
+        }
       } catch (error) {
-        console.error('Error fetching files:', error);
-        document.getElementById('file-list').textContent = 'Unable to load files.';
+        console.error(`Error fetching files for path "${path}":`, error);
       }
     }
 
+    // Start fetching files
     fetchFilesFromGitHub();
   </script>
 </body>

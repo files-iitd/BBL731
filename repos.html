@@ -5,170 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BBL731 Course Files | IIT Delhi</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-primary: #0f1729;
-            --bg-secondary: #1a2234;
-            --text-primary: #ffffff;
-            --text-secondary: #a3b3c9;
-            --accent-color: #6366f1;
-            --hover-color: #818cf8;
-            --gradient-start: #6366f1;
-            --gradient-end: #8b5cf6;
-            --card-bg: rgba(26, 34, 52, 0.7);
-        }
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: radial-gradient(circle at top right, #2d1f50 0%, var(--bg-primary) 100%);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        .glassmorphic {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e6eaf4 100%);
         }
         .file-container {
-            max-width: 1000px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 2.5rem;
-            border-radius: 24px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 2rem;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 12px;
         }
         .file-list-item {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .file-list-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, var(--gradient-start), var(--gradient-end));
-            transform: translateX(-100%);
-            transition: 0.6s;
-            opacity: 0.15;
-        }
-        .file-list-item:hover::before {
-            transform: translateX(100%);
+            transition: all 0.3s ease;
         }
         .file-list-item:hover {
-            transform: translateY(-2px);
-            background-color: rgba(99, 102, 241, 0.1);
-            border-color: var(--accent-color);
+            transform: translateX(10px);
+            color: #3182ce;
         }
         .loader {
-            border-top-color: var(--accent-color);
-            animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            border-top-color: #3182ce;
+            animation: spin 1s linear infinite;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        #file-list > li {
-            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            opacity: 0;
-        }
-        .search-input {
-            background: rgba(255,255,255,0.08);
-            border: 2px solid rgba(255,255,255,0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 12px;
-        }
-        .search-input:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
-            background: rgba(255,255,255,0.12);
-        }
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1rem;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .folder-header {
-            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-        .breadcrumb {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-        }
-        .breadcrumb-item {
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-        .breadcrumb-item:hover {
-            color: var(--accent-color);
-        }
     </style>
 </head>
-<body class="py-12 px-4 sm:px-6 lg:px-8">
-    <div class="file-container glassmorphic w-full space-y-8">
+<body class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="file-container w-full space-y-8">
         <div class="text-center">
-            <h1 class="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
-                BBL731 Course Repository
-            </h1>
-            <p class="text-xl text-gray-400 mb-8">Comprehensive Resource Hub for IIT Delhi Students</p>
-            
-            <div class="stats-container">
-                <div class="stat-card">
-                    <h3 class="text-2xl font-bold text-indigo-400" id="total-files">0</h3>
-                    <p class="text-gray-400">Total Files</p>
-                </div>
-                <div class="stat-card">
-                    <h3 class="text-2xl font-bold text-purple-400" id="total-size">0 MB</h3>
-                    <p class="text-gray-400">Total Size</p>
-                </div>
-                <div class="stat-card">
-                    <h3 class="text-2xl font-bold text-pink-400" id="last-updated">-</h3>
-                    <p class="text-gray-400">Last Updated</p>
-                </div>
-            </div>
-            
-            <div class="mb-6 relative">
-                <input 
-                    type="text" 
-                    id="search-input" 
-                    placeholder="Search files and folders..." 
-                    class="search-input w-full p-4 text-lg text-white"
-                >
-                <div class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                    🔍
-                </div>
-            </div>
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">BBL731 Course Repository</h1>
+            <p class="text-xl text-gray-600 mb-8">File List for IIT Delhi Students</p>
         </div>
-
-        <nav class="breadcrumb" id="breadcrumb">
-            <span class="breadcrumb-item">Home</span>
-        </nav>
         
         <div id="loader" class="flex justify-center items-center mb-6">
             <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
@@ -183,94 +56,7 @@
         const branch = 'main';
         const baseCustomURL = 'https://files.rtnesharma.in/BBL731/';
 
-        const searchInput = document.getElementById('search-input');
-        let allItems = [];
-
-        function getFileIcon(filename) {
-            const ext = filename.split('.').pop().toLowerCase();
-            const icons = {
-                'pdf': '📄', // PDF icon
-                'doc': '📝', // Word doc icon
-                'docx': '📝',
-                'ppt': '📊', // Presentation icon
-                'pptx': '📊',
-                'xls': '📊', // Spreadsheet icon
-                'xlsx': '📊',
-                'txt': '📋', // Text file icon
-                'zip': '🗄️', // Compressed file icon
-                'rar': '🗄️',
-                'default': '📁'
-            };
-            return icons[ext] || icons['default'];
-        }
-
-        function createFileElement(item) {
-            const listItem = document.createElement('li');
-            listItem.className = 'file-list-item bg-gray-800 p-4 rounded-lg hover:bg-gray-700 cursor-pointer flex items-center justify-between';
-            
-            const link = document.createElement('a');
-            link.href = `${baseCustomURL}${item.path}`;
-            link.target = '_blank';
-            link.className = 'flex items-center w-full';
-            
-            // File icon and path
-            const fileIcon = document.createElement('span');
-            fileIcon.className = 'mr-4 text-2xl';
-            fileIcon.innerHTML = getFileIcon(item.path);
-            
-            const filePathSpan = document.createElement('span');
-            filePathSpan.textContent = item.path;
-            filePathSpan.className = 'text-gray-200 hover:text-blue-300';
-            
-            link.appendChild(fileIcon);
-            link.appendChild(filePathSpan);
-            listItem.appendChild(link);
-            
-            // File size (if available)
-            if (item.size) {
-                const sizeSpan = document.createElement('span');
-                sizeSpan.textContent = `${(item.size / 1024).toFixed(1)} KB`;
-                sizeSpan.className = 'text-gray-500 text-sm';
-                listItem.appendChild(sizeSpan);
-            }
-
-            return listItem;
-        }
-
-        let totalSize = 0;
-        let fileCount = 0;
-        let lastUpdated = null;
-
-        function updateStats(items) {
-            fileCount = items.filter(item => item.type === 'file').length;
-            totalSize = items.reduce((acc, item) => acc + (item.size || 0), 0);
-            lastUpdated = new Date().toLocaleDateString();
-
-            document.getElementById('total-files').textContent = fileCount;
-            document.getElementById('total-size').textContent = `${(totalSize / (1024 * 1024)).toFixed(2)} MB`;
-            document.getElementById('last-updated').textContent = lastUpdated;
-        }
-
-        function updateBreadcrumb(path) {
-            const breadcrumb = document.getElementById('breadcrumb');
-            breadcrumb.innerHTML = '<span class="breadcrumb-item">Home</span>';
-            
-            if (path) {
-                const parts = path.split('/');
-                let currentPath = '';
-                
-                parts.forEach((part, index) => {
-                    currentPath += part + '/';
-                    breadcrumb.innerHTML += `
-                        <span class="text-gray-400">/</span>
-                        <span class="breadcrumb-item" data-path="${currentPath}">${part}</span>
-                    `;
-                });
-            }
-        }
-
         async function fetchFilesFromGitHub(path = '', parentList = null) {
-            updateBreadcrumb(path);
             const apiURL = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}?ref=${branch}`;
             try {
                 const response = await fetch(apiURL);
@@ -279,7 +65,6 @@
                 
                 // Use the main list or create a nested list
                 const fileListElement = parentList || document.getElementById('file-list');
-                fileListElement.innerHTML = ''; // Clear previous content
                 
                 // Sort items: directories first, then files alphabetically
                 const sortedItems = items.sort((a, b) => {
@@ -290,16 +75,34 @@
 
                 for (const item of sortedItems) {
                     if (item.type === 'file') {
-                        const fileItem = createFileElement(item);
-                        fileListElement.appendChild(fileItem);
-                        allItems.push(fileItem);
+                        // Create list item for files
+                        const listItem = document.createElement('li');
+                        listItem.className = 'file-list-item bg-gray-100 p-3 rounded-lg hover:bg-blue-100 cursor-pointer';
+                        
+                        const link = document.createElement('a');
+                        link.href = `${baseCustomURL}${item.path}`;
+                        link.target = '_blank';
+                        link.className = 'flex items-center';
+                        
+                        // File icon and path
+                        const fileIcon = document.createElement('span');
+                        fileIcon.className = 'mr-3 text-blue-500';
+                        fileIcon.innerHTML = '📄'; // File emoji
+                        
+                        const filePathSpan = document.createElement('span');
+                        filePathSpan.textContent = item.path;
+                        
+                        link.appendChild(fileIcon);
+                        link.appendChild(filePathSpan);
+                        listItem.appendChild(link);
+                        fileListElement.appendChild(listItem);
                     } else if (item.type === 'dir') {
                         // Create a nested list for subfolders
                         const listItem = document.createElement('li');
-                        listItem.className = 'bg-gray-900 p-4 rounded-lg';
+                        listItem.className = 'bg-gray-200 p-3 rounded-lg';
                         
                         const folderSpan = document.createElement('span');
-                        folderSpan.className = 'font-semibold text-gray-300 flex items-center text-xl';
+                        folderSpan.className = 'font-semibold text-gray-800 flex items-center';
                         folderSpan.innerHTML = '📁 ' + item.name;
                         listItem.appendChild(folderSpan);
                         
@@ -322,24 +125,14 @@
                 // Show error message
                 const fileListElement = document.getElementById('file-list');
                 const errorItem = document.createElement('li');
-                errorItem.className = 'text-red-400 text-center p-4';
+                errorItem.className = 'text-red-600 text-center p-4';
                 errorItem.textContent = `Error loading files: ${error.message}`;
                 fileListElement.appendChild(errorItem);
                 
                 // Hide loader
                 document.getElementById('loader').style.display = 'none';
             }
-            updateStats(items);
         }
-
-        // Search functionality
-        searchInput.addEventListener('input', () => {
-            const searchTerm = searchInput.value.toLowerCase();
-            allItems.forEach(item => {
-                const text = item.textContent.toLowerCase();
-                item.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        });
 
         // Start fetching files
         fetchFilesFromGitHub();
